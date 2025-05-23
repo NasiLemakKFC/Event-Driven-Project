@@ -36,5 +36,15 @@ namespace GroupProject
         {
 
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AdminID = 0;
+            Properties.Settings.Default.RememberMe = false;
+            Properties.Settings.Default.Save();
+
+            this.Hide();
+            new LoginPage().Show();
+        }
     }
 }

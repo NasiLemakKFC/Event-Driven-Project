@@ -16,7 +16,21 @@ namespace GroupProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginPage());
+            if (Properties.Settings.Default.RememberMe)
+            {
+                if (Properties.Settings.Default.AdminID != 0)
+                {
+                    Application.Run(new AdminForm());
+                }
+                else
+                {
+                    Application.Run(new SubmissionForm(Properties.Settings.Default.UserID));
+                }
+            }
+            else
+            {
+                Application.Run(new LoginPage());
+            }
         }
     }
 }
