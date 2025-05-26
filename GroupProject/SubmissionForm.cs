@@ -95,9 +95,13 @@ namespace GroupProject
             this.Hide();
             new LoginPage().Show();
         }
+        string UserName;
 
         private void SubmissionForm_Load(object sender, EventArgs e)
         {
+            dateTimePicker1.MinDate = DateTime.Now;
+            dateTimePicker1.MaxDate = DateTime.Now.AddDays(10);
+
             string query = "SELECT Username FROM [User] WHERE ID = @userID";
             using (SqlConnection conn = new SqlConnection(connection))
             using (SqlCommand cmd = new SqlCommand(query, conn)) 
@@ -107,10 +111,12 @@ namespace GroupProject
 
                 object result = cmd.ExecuteScalar();
                 conn.Close();
+                UserName = result.ToString();
 
                 if (result != null)
                 {
                     CustomerNameLabel.Text = $"{result.ToString()} Items";
+                    UserHistoryLabel.Text = $"{result.ToString()} History";
                 }
                 else
                 {
@@ -124,6 +130,9 @@ namespace GroupProject
                 "Large Appliances"
             });
             LoadItems();
+
+            //history
+
         }
 
         private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
@@ -135,7 +144,7 @@ namespace GroupProject
         {
             if (dataGridView1.CurrentRow != null && dataGridView1.CurrentRow.DataBoundItem != null)
             {
-                int itemId = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Id"].Value);
+                int itemId = Convert.ToInt32(dataGridView1.CurrentRow.Cells["colId"].Value);
 
                 string query = "DELETE FROM Items WHERE Id = @ItemId";
 
@@ -179,7 +188,7 @@ namespace GroupProject
                 textBox1.Text = "";
                 comboBox1.SelectedIndex = -1;
                 comboBox2.SelectedIndex = -1;
-                numericUpDown1.Value = 0;
+                numericUpDown1.Value = 1;
 
                 MessageBox.Show("All items removed successfully");
                 LoadItems();
@@ -362,10 +371,9 @@ namespace GroupProject
         {
             CalculateTotal();
         }
-
+        double TotalWeight = 0;
         private void button5_Click(object sender, EventArgs e)
         {
-            double TotalWeight = 0;
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
@@ -416,8 +424,13 @@ namespace GroupProject
                     conn.Close();
                 }
             }
-            new PaymentForm().Show();
+            new PaymentForm(userID,TotalAmount, TransactionID, UserName).Show();
             this.Hide();
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
